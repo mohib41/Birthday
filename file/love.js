@@ -162,13 +162,13 @@
             ctx.scale(scale, scale);
             ctx.moveTo(0, 0);
     	    ctx.lineTo(15, 15);
-    	    ctx.lineTo(130, 15);
+    	    // ctx.lineTo(130, 15);
             ctx.stroke();
 
             ctx.moveTo(0, 0);
             ctx.scale(0.75, 0.75);
-            ctx.font = "12px,Verdana"; // 字号肿么没有用? (ˉ(∞)ˉ)
-            ctx.fillText("Click Me:) ", 30, -5);
+            ctx.font = "14px,Verdana"; // 字号肿么没有用? (ˉ(∞)ˉ)
+            ctx.fillText("Click Me", 30, -5);
             ctx.fillText("Birthday Queen !", 28, 10);
             ctx.restore();
         },
@@ -260,11 +260,11 @@
         initBloom: function() {
             var bloom = this.opt.bloom || {};
             var cache = [],
-                num = bloom.num || 500, 
+                num = bloom.num || 3000, // Increased number of blooms
                 width = bloom.width || this.width,
                 height = bloom.height || this.height,
                 figure = this.seed.heart.figure;
-            var r = 240, x, y;
+            var r = 200, x, y; // Reduced radius for tighter clustering
             for (var i = 0; i < num; i++) {
                 cache.push(this.createBloom(width, height, r, figure));
             }
@@ -471,7 +471,7 @@
     Bloom = function(tree, point, figure, color, alpha, angle, scale, place, speed) {
         this.tree = tree;
         this.point = point;
-        this.color = color || 'rgb(255,' + random(0, 255) + ',' + random(0, 255) + ')';
+        this.color = color || 'rgb(255, 0, 0)';
         this.alpha = alpha || random(0.3, 1);
         this.angle = angle || random(0, 360);
         this.scale = scale || 0.1;
@@ -496,11 +496,17 @@
             var s = this, ctx = s.tree.ctx, figure = s.figure;
 
             ctx.save();
-            ctx.fillStyle = s.color;
             ctx.globalAlpha = s.alpha;
             ctx.translate(s.point.x, s.point.y);
             ctx.scale(s.scale, s.scale);
             ctx.rotate(s.angle);
+             // Create sparkle gradient
+            var gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 10);
+            gradient.addColorStop(0, "rgba(255,255,255,0.8)");
+            gradient.addColorStop(0.3, s.color);
+            gradient.addColorStop(1, s.color);
+            ctx.fillStyle = gradient;
+
             ctx.beginPath();
             ctx.moveTo(0, 0);
             for (var i = 0; i < figure.length; i++) {
