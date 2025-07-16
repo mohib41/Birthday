@@ -59,6 +59,23 @@
             height: 100vh;
         }
 
+        .say {
+            margin-bottom: 8px 0;
+        }
+
+        #clickMeBtn {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 9999;
+        }
+
         @media(max-width: 768px) {
             #text {
                 top: 5%;
@@ -72,11 +89,34 @@
                 font-size: 14px;
             }
         }
-
-        .hand {
-            cursor: pointer !important;
-        }
     </style>
+
+</head>
+
+<body>
+    <audio loop id="myAudio">
+        <source src="aud.mp3" type="audio/mp3" />
+    </audio>
+
+    <div id="text">
+        <div id="code" style="display:none;">
+            <p class="say">Happy Birthday Babe 🎈</p>
+            <p class="say">May Allah Bless You 🍀</p>
+            <p class="say">And Give You Many Happiness 💕</p>
+            <p class="say">I Loved You ❤️</p>
+            <p class="say">And I Will Always Love You 🥺❤️</p>
+            <p class="say">Hope You Have A Great Day Today ❤️😘</p>
+        </div>
+    </div>
+
+    <div id="clock-box">
+        <span id="clock"></span>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <!-- Transparent Click Me Button -->
+    <button id="clickMeBtn"></button>
 
     <script>
         function playAudio() {
@@ -95,7 +135,6 @@
 
             canvas.attr("width", width);
             canvas.attr("height", height);
-            canvas.css('cursor', 'pointer');
 
             var opts = {
                 seed: {
@@ -126,38 +165,11 @@
             var foot = tree.footer;
             var hold = 1;
 
-            canvas.on("click", function(e) {
+            $('#clickMeBtn').on('click touchstart', function(e) {
+                e.preventDefault();
                 playAudio();
-
-                var offset = canvas.offset();
-                var x = e.pageX - offset.left;
-                var y = e.pageY - offset.top;
-
-                if (seed.hover(x, y)) {
-                    hold = 0;
-                    canvas.off("click");
-                    canvas.off("mousemove touchmove");
-                    canvas.css('cursor', 'default');
-                }
-            });
-
-            canvas.on("mousemove touchmove", function(e) {
-                var offset = canvas.offset();
-                var x, y;
-
-                if (e.type === "touchmove") {
-                    x = e.originalEvent.touches[0].pageX - offset.left;
-                    y = e.originalEvent.touches[0].pageY - offset.top;
-                } else {
-                    x = e.pageX - offset.left;
-                    y = e.pageY - offset.top;
-                }
-
-                if (seed.hover(x, y)) {
-                    canvas.addClass('hand');
-                } else {
-                    canvas.removeClass('hand');
-                }
+                hold = 0;
+                $('#clickMeBtn').hide(); // Hide button after click
             });
 
             var seedAnimate = eval(Jscex.compile("async", function () {
@@ -227,28 +239,5 @@
             };
         })(jQuery);
     </script>
-</head>
-
-<body>
-    <audio loop id="myAudio">
-        <source src="aud.mp3" type="audio/mp3" />
-    </audio>
-
-    <div id="text">
-        <div id="code" style="display:none;">
-            <p class="say">Happy Birthday Babe 🎈</p>
-            <p class="say">May Allah Bless You 🍀</p>
-            <p class="say">And Give You Many Happiness 💕</p>
-            <p class="say">I Loved You ❤️</p>
-            <p class="say">And I Will Always Love You 🥺❤️</p>
-            <p class="say">Hope You Have A Great Day Today ❤️😘</p>
-        </div>
-    </div>
-
-    <div id="clock-box">
-        <span id="clock"></span>
-    </div>
-
-    <canvas id="canvas"></canvas>
 </body>
 </html>
