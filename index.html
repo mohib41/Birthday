@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Happy Birthday Love</title>
     <link rel="stylesheet" href="./file/default.css" />
-    <link rel="icon" href="logo.png"
+    <link rel="icon" href="logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
     <script src="./file/jquery.min.js"></script>
     <script src="./file/jscex.min.js"></script>
@@ -80,7 +80,12 @@
 
     <script>
         function playAudio() {
-            document.getElementById("myAudio").play();
+            var audio = document.getElementById("myAudio");
+            if (audio.paused) {
+                audio.play().catch(function(e) {
+                    console.log("Audio play blocked:", e);
+                });
+            }
         }
 
         $(document).ready(function() {
@@ -120,23 +125,45 @@
             var foot = tree.footer;
             var hold = 1;
 
-            canvas.click(function(e) {
+            function handleInteraction(e) {
                 playAudio();
-                var offset = canvas.offset(), x, y;
-                x = e.pageX - offset.left;
-                y = e.pageY - offset.top;
+
+                var offset = canvas.offset();
+                var x, y;
+
+                if (e.type === "touchstart") {
+                    x = e.originalEvent.touches[0].pageX - offset.left;
+                    y = e.originalEvent.touches[0].pageY - offset.top;
+                } else {
+                    x = e.pageX - offset.left;
+                    y = e.pageY - offset.top;
+                }
+
                 if (seed.hover(x, y)) {
                     hold = 0;
-                    canvas.off("click");
-                    canvas.off("mousemove");
+                    canvas.off("click touchstart");
+                    canvas.off("mousemove touchmove");
                     canvas.removeClass('hand');
                 }
-            }).mousemove(function(e) {
-                var offset = canvas.offset(), x, y;
-                x = e.pageX - offset.left;
-                y = e.pageY - offset.top;
+            }
+
+            function handleMove(e) {
+                var offset = canvas.offset();
+                var x, y;
+
+                if (e.type === "touchmove") {
+                    x = e.originalEvent.touches[0].pageX - offset.left;
+                    y = e.originalEvent.touches[0].pageY - offset.top;
+                } else {
+                    x = e.pageX - offset.left;
+                    y = e.pageY - offset.top;
+                }
+
                 canvas.toggleClass('hand', seed.hover(x, y));
-            });
+            }
+
+            canvas.on("click touchstart", handleInteraction);
+            canvas.on("mousemove touchmove", handleMove);
 
             var seedAnimate = eval(Jscex.compile("async", function () {
                 seed.draw();
@@ -169,7 +196,7 @@
             }));
 
             var textAnimate = eval(Jscex.compile("async", function () {
-                $("#code").show().typewriter(150); // slower typing speed
+                $("#code").show().typewriter(150);
             }));
 
             var runAsync = eval(Jscex.compile("async", function () {
@@ -208,20 +235,19 @@
 </head>
 
 <body>
-    <audio autoplay loop id="myAudio">
+    <audio loop id="myAudio">
         <source src="aud.mp3" type="audio/mp3" />
     </audio>
 
     <div id="text">
         <div id="code" style="display:none;">
-    <p class="say">Happy Birthday Babe 🎈</p>
-    <p class="say">May Allah Bless You 🍀</p>
-    <p class="say">And Give You Many Happiness 💕</p>
-    <p class="say">I Loved You ❤️</p>
-    <p class="say">And I Will Always Love You 🥺❤️</p>
-    <p class="say">Hope You Have A Great Day Today ❤️😘</p>
-</div>
-
+            <p class="say">Happy Birthday Babe 🎈</p>
+            <p class="say">May Allah Bless You 🍀</p>
+            <p class="say">And Give You Many Happiness 💕</p>
+            <p class="say">I Loved You ❤️</p>
+            <p class="say">And I Will Always Love You 🥺❤️</p>
+            <p class="say">Hope You Have A Great Day Today ❤️😘</p>
+        </div>
     </div>
 
     <div id="clock-box">
